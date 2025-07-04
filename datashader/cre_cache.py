@@ -1,21 +1,18 @@
 from __future__ import annotations
 
 import hashlib
-import os
 from numba.core.caching import Cache, _UserProvidedCacheLocator, CompileResultCacheImpl
 from numba.core.serialize import dumps
 from numba.core.dispatcher import Dispatcher
 from numba.extending import _Intrinsic
-from numba import config
 
 
 class _PreciseCacheLocator(_UserProvidedCacheLocator):
     """Cache locator hashing function bytecode and referenced globals."""
 
     def __init__(self, py_func, py_file):
+        super().__init__(py_func, py_file)
         self._py_func = py_func
-        cache_subpath = self.get_suitable_cache_subpath(py_file)
-        self._cache_path = os.path.join(config.CACHE_DIR, cache_subpath)
 
         code = py_func.__code__
         glbs = py_func.__globals__

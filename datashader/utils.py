@@ -6,6 +6,9 @@ import re
 from inspect import getmro
 
 import numba as nb
+
+# Patches Dispatcher with enable_precise_caching
+import datashader.cre_cache  # noqa: F401
 import numpy as np
 import pandas as pd
 
@@ -61,7 +64,9 @@ def _make_ngjit(parallel: bool = False):
     jit_kwargs = {
         "nopython": True,
         "nogil": True,
-        "cache": ENABLE_NUMBA_CACHE,
+        # Disable Numba's default caching; we enable deterministic caching
+        # explicitly after compilation if requested.
+        "cache": False,
     }
     if parallel:
         jit_kwargs["parallel"] = True
