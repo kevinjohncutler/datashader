@@ -43,14 +43,44 @@ except ImportError:
 class VisibleDeprecationWarning(UserWarning):
     """Visible deprecation warning.
 
-    By default, python will not show deprecation warnings, so this class
-    can be used when a very visible warning is helpful, for example because
-    the usage is most likely a user bug.
+    By default, python will not show deprecation warnings, so this class can be
+    used when a very visible warning is helpful, for example because the usage
+    is most likely a user bug.
     """
 
 
-ngjit = nb.jit(nopython=True, nogil=True)
-ngjit_parallel = nb.jit(nopython=True, nogil=True, parallel=True)
+ENABLE_NUMBA_CACHE = os.environ.get("DATASHADER_NUMBA_CACHE", "0").lower() not in (
+    "0",
+    "false",
+    "off",
+    "",
+)
+
+
+def _make_ngjit(parallel: bool = False):
+    jit_kwargs = {
+        "nopython": True,
+        "nogil": True,
+        "cache": ENABLE_NUMBA_CACHE,
+    }
+    if parallel:
+        jit_kwargs["parallel"] = True
+    nb_jit = nb.jit(**jit_kwargs)
+
+    def wrapper(func):
+        compiled = nb_jit(func)
+        if ENABLE_NUMBA_CACHE and hasattr(compiled, "enable_precise_caching"):
+            try:
+                compiled.enable_precise_caching()
+            except Exception:
+                pass
+        return compiled
+
+    return wrapper
+
+
+ngjit = _make_ngjit()
+ngjit_parallel = _make_ngjit(parallel=True)
 
 # Get and save the Numba version, will be used to limit functionality
 numba_version = tuple([int(x) for x in re.match(
