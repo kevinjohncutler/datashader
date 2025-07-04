@@ -233,6 +233,8 @@ def _build_draw_polygon(append, map_onto_pixel, x_mapper, y_mapper, expand_aggs_
                     # If winding number is not zero, point
                     # is inside polygon
                     append(i, xi, yi, *aggs_and_cols)
+    draw_polygon.__name__ = "draw_polygon"
+    draw_polygon.__module__ = __name__
 
     return draw_polygon
 

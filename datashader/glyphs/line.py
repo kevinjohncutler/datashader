@@ -1090,10 +1090,28 @@ def _build_draw_segment(append, map_onto_pixel, expand_aggs_and_cols, line_width
                                 segment_start, segment_end, xm_2, ym_2, append,
                                 nx, ny, buffer, *aggs_and_cols)
             else:
-                _bresenham(i, sx, tx, sy, ty, xmin, xmax, ymin, ymax,
-                           segment_start, x0_2, x1_2, y0_2, y1_2,
-                           clipped, append, *aggs_and_cols)
+                _bresenham(
+                    i,
+                    sx,
+                    tx,
+                    sy,
+                    ty,
+                    xmin,
+                    xmax,
+                    ymin,
+                    ymax,
+                    segment_start,
+                    x0_2,
+                    x1_2,
+                    y0_2,
+                    y1_2,
+                    clipped,
+                    append,
+                    *aggs_and_cols,
+                )
 
+    draw_segment.__name__ = "draw_segment"
+    draw_segment.__module__ = __name__
     return draw_segment
 
 def _build_extend_line_axis0(draw_segment, expand_aggs_and_cols, antialias_stage_2_funcs):

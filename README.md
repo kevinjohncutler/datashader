@@ -110,6 +110,12 @@ Otherwise create a new environment:
 
         pip install --no-deps -e .
 
+## Numba caching
+
+Setting the environment variable `DATASHADER_NUMBA_CACHE=1` enables caching of
+Numba compiled kernels. When enabled, subsequent runs can load cached kernels
+from disk for faster startup.
+
 ## Learning more
 
 After working through the examples, you can find additional resources linked
