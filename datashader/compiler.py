@@ -245,6 +245,8 @@ def make_antialias_stage_2_functions(antialias_stage_2, bases, cuda, partitioned
     logger.debug(code)
     exec(code, namespace)
     aa_stage_2_accumulate = ngjit(namespace["aa_stage_2_accumulate"])
+    aa_stage_2_accumulate.__name__ = "aa_stage_2_accumulate"
+    aa_stage_2_accumulate.__module__ = __name__
 
     # aa_stage_2_clear
     if np.any(np.isnan(aa_zeroes)):
@@ -257,6 +259,8 @@ def make_antialias_stage_2_functions(antialias_stage_2, bases, cuda, partitioned
     logger.debug(code)
     exec(code, namespace)
     aa_stage_2_clear = ngjit(namespace["aa_stage_2_clear"])
+    aa_stage_2_clear.__name__ = "aa_stage_2_clear"
+    aa_stage_2_clear.__module__ = __name__
 
     # aa_stage_2_copy_back
     @ngjit
@@ -264,6 +268,9 @@ def make_antialias_stage_2_functions(antialias_stage_2, bases, cuda, partitioned
         # Numba access to heterogeneous tuples is only permitted using literal_unroll.
         for agg_and_copy in literal_unroll(aggs_and_copies):
             agg_and_copy[0][:] = agg_and_copy[1][:]
+
+    aa_stage_2_copy_back.__name__ = "aa_stage_2_copy_back"
+    aa_stage_2_copy_back.__module__ = __name__
 
     return aa_stage_2_accumulate, aa_stage_2_clear, aa_stage_2_copy_back
 
