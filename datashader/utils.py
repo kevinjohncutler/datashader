@@ -52,13 +52,15 @@ class VisibleDeprecationWarning(UserWarning):
     """
 
 
-ENABLE_NUMBA_CACHE = os.environ.get("DATASHADER_NUMBA_CACHE", "0").lower() not in (
-    "0",
-    "false",
-    "off",
-    "",
-)
+# ENABLE_NUMBA_CACHE = os.environ.get("DATASHADER_NUMBA_CACHE", "0").lower() not in (
+#     "0",
+#     "false",
+#     "off",
+#     "",
+# )
 
+
+ENABLE_NUMBA_CACHE = True
 
 def _make_ngjit(parallel: bool = False):
     jit_kwargs = {
