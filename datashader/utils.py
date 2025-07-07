@@ -74,7 +74,11 @@ def _make_ngjit(parallel: bool = False):
 
     def wrapper(func):
         compiled = nb_jit(func)
-        if ENABLE_NUMBA_CACHE and hasattr(compiled, "enable_precise_caching"):
+        if (
+            ENABLE_NUMBA_CACHE
+            and "<locals>" not in func.__qualname__
+            and hasattr(compiled, "enable_precise_caching")
+        ):
             try:
                 compiled.enable_precise_caching()
             except Exception:
