@@ -59,6 +59,9 @@ ENABLE_NUMBA_CACHE = os.environ.get("DATASHADER_NUMBA_CACHE", "1").lower() not i
     "",
 )
 
+ENABLE_NUMBA_CACHE = True
+
+
 def _make_ngjit(parallel: bool = False):
     base_jit_kwargs = {
         "nopython": True,
