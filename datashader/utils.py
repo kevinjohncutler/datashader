@@ -52,7 +52,7 @@ class VisibleDeprecationWarning(UserWarning):
     """
 
 
-ENABLE_NUMBA_CACHE = os.environ.get("DATASHADER_NUMBA_CACHE", "0").lower() not in (
+ENABLE_NUMBA_CACHE = os.environ.get("DATASHADER_NUMBA_CACHE", "1").lower() not in (
     "0",
     "false",
     "off",
@@ -60,21 +60,20 @@ ENABLE_NUMBA_CACHE = os.environ.get("DATASHADER_NUMBA_CACHE", "0").lower() not i
 )
 
 def _make_ngjit(parallel: bool = False):
-    jit_kwargs = {
+    base_jit_kwargs = {
         "nopython": True,
         "nogil": True,
-        # Disable Numba's default caching by default; we enable deterministic
-        # caching explicitly after compilation if requested.
-        "cache": ENABLE_NUMBA_CACHE,
     }
     if parallel:
-        jit_kwargs["parallel"] = True
-    nb_jit = nb.jit(**jit_kwargs)
+        base_jit_kwargs["parallel"] = True
 
     def wrapper(func):
-        compiled = nb_jit(func)
+        use_cache = ENABLE_NUMBA_CACHE and not func.__code__.co_filename.startswith("<")
+        jit_kwargs = dict(base_jit_kwargs)
+        jit_kwargs["cache"] = use_cache
+        compiled = nb.jit(**jit_kwargs)(func)
         if (
-            ENABLE_NUMBA_CACHE
+            use_cache
             and "<locals>" not in func.__qualname__
             and hasattr(compiled, "enable_precise_caching")
         ):
