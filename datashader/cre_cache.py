@@ -29,6 +29,13 @@ class _PreciseCacheLocator(_UserProvidedCacheLocator):
                 v_code = v.py_func.__code__.co_code
                 used_globals[k] = v_code
             else:
+                try:
+                    # Ensure the global is picklable, otherwise skip it to
+                    # avoid failures during caching (e.g. builtins.input in
+                    # interactive environments)
+                    dumps(v)
+                except Exception:
+                    continue
                 used_globals[k] = v
 
         func_bytes = code.co_code + dumps(used_globals)
