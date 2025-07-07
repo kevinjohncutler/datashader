@@ -52,23 +52,20 @@ class VisibleDeprecationWarning(UserWarning):
     """
 
 
-# ENABLE_NUMBA_CACHE = os.environ.get("DATASHADER_NUMBA_CACHE", "0").lower() not in (
-#     "0",
-#     "false",
-#     "off",
-#     "",
-# )
-
-
-ENABLE_NUMBA_CACHE = True
+ENABLE_NUMBA_CACHE = os.environ.get("DATASHADER_NUMBA_CACHE", "0").lower() not in (
+    "0",
+    "false",
+    "off",
+    "",
+)
 
 def _make_ngjit(parallel: bool = False):
     jit_kwargs = {
         "nopython": True,
         "nogil": True,
-        # Disable Numba's default caching; we enable deterministic caching
-        # explicitly after compilation if requested.
-        "cache": False,
+        # Disable Numba's default caching by default; we enable deterministic
+        # caching explicitly after compilation if requested.
+        "cache": ENABLE_NUMBA_CACHE,
     }
     if parallel:
         jit_kwargs["parallel"] = True
