@@ -7,6 +7,9 @@ from pathlib import Path
 def _run(script: Path, cwd: Path) -> str:
     env = os.environ.copy()
     env['NUMBA_DEBUG_CACHE'] = '1'
+    env['DATASHADER_NUMBA_CACHE'] = '1'
+    root = Path(__file__).resolve().parents[1]
+    env['PYTHONPATH'] = str(root)
     return subprocess.check_output([sys.executable, str(script)], cwd=cwd, env=env, text=True)
 
 
