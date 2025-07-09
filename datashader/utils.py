@@ -75,11 +75,7 @@ def _make_ngjit(parallel: bool = False):
         jit_kwargs = dict(base_jit_kwargs)
         jit_kwargs["cache"] = use_cache
         compiled = nb.jit(**jit_kwargs)(func)
-        if (
-            use_cache
-            and "<locals>" not in func.__qualname__
-            and hasattr(compiled, "enable_precise_caching")
-        ):
+        if use_cache and hasattr(compiled, "enable_precise_caching"):
             try:
                 compiled.enable_precise_caching()
             except Exception:
